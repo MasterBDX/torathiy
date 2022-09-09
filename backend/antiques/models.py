@@ -28,8 +28,8 @@ class AntiqueLocation(models.Model):
 class Antique(models.Model):
     uid = models.CharField(_("Unique ID"), max_length=255)    
     name = models.CharField(_("Name"), max_length=255)
-    overview = models.CharField(_("Name"), max_length=255)
-    description = RichTextField(_("Name"), max_length=255)
+    overview = models.CharField(_("Name"), max_length=1000000)
+    description = RichTextField(_("Name"), max_length=1000000)
     location = models.OneToOneField(AntiqueLocation,
                                     related_name='location',
                                     on_delete=models.SET_NULL,
@@ -50,7 +50,7 @@ class Reference(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     date = models.DateField(_("Date"), null=True, blank=True)
     url = models.URLField(_("Url"), null=True, blank=True)
-    description = models.TextField(_("Description"), null=True, blank=True)
+    description = models.TextField(_("Description"), null=True, blank=True, max_length=1000000)
 
     def __str__(self):
         return self.name

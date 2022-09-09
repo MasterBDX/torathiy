@@ -9,7 +9,6 @@ from tensorflow import Graph
 from keras.models import load_model
 from keras import backend as K
 
-
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_200_OK,
@@ -27,13 +26,10 @@ img_height, img_width = 180, 180
 JOSN_IMAGE_CLASSES_PATH = settings.BASE_DIR / 'images/classification_model/image_classes.json'
 MODEL = settings.BASE_DIR / 'images/classification_model/Model.h5'
 
-
-
 with open(JOSN_IMAGE_CLASSES_PATH, 'r') as f:
     labelInfo = f.read()
 
 labelInfo = json.loads(labelInfo)
-
 
 model_graph = Graph()
 with model_graph.as_default():
@@ -41,8 +37,6 @@ with model_graph.as_default():
     tf_session.run(tf.compat.v1.global_variables_initializer())
     with tf_session.as_default():
         model = load_model(MODEL)
-
-
 
 K.set_session(tf_session)
 K.set_learning_phase(0)
@@ -57,18 +51,26 @@ class AntiquesDataFetchAPIView(APIView):
         if serializer.is_valid():
             image = serializer.save()
             image_path = image.image.path
+            # print(image_path)
             img = load_img(image_path, target_size=(img_height, img_width))
             x = img_to_array(img)
             x = x.reshape(1, img_height, img_width, 3)
-            print(x,"gotcha")
+            # print(x, "gotcha")
 
             with model_graph.as_default():
                 with tf_session.as_default():
                     predictions = model.predict(x)
-                    print("predictions",predictions)
+                    # print("predictions", predictions)
 
             predicted_label = labelInfo[str(np.argmax(predictions[0]))]
-            print("predicted_label",predicted_label)
+            heritage_id = str(np.argmax(predictions[0]))
+
+            score = tf.nn.softmax(predictions[0])
+            percent = 100 * np.max(score)
+
+            print("predicted_label", predicted_label)
+            print("heritage id: ", heritage_id)
+            print("percent: ", percent)
 
             return Response({'msg': 'Image has been saved'}, status=HTTP_201_CREATED)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
