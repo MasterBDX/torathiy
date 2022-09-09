@@ -19,27 +19,8 @@ const MyStack = () => {
     const navigation = useNavigation();
 
     return (
-        <Stack.Navigator initialRouteName="Camera"
+        <Stack.Navigator initialRouteName="AntiqueDetail"
             screenOptions={{
-                headerShown: false,
-                headerRight: ({ tintColor }) => (
-                    <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingRight: 15 }}>
-                        <TouchableOpacity
-                            onPress={() => console.log('Hey im centered')}
-                        >
-                            <Feather name="bookmark" size={22} color={tintColor} />
-                        </TouchableOpacity>
-                    </View>
-                ),
-                headerLeft: ({ tintColor }) => (
-                    <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingLeft: 15 }}>
-                        <TouchableOpacity
-                            onPress={() => navigation.toggleDrawer()}
-                        >
-                            <Feather name="menu" size={22} color={tintColor} />
-                        </TouchableOpacity>
-                    </View>
-                ),
                 headerRightContainerStyle: styles.headerRightContainer,
                 headerTitleAlign: 'center',
                 headerTitleStyle: styles.headerTitle,
@@ -47,7 +28,27 @@ const MyStack = () => {
 
             }}>
             <Stack.Screen name="Search" component={SearchScreen} />
-            <Stack.Screen name="Camera" component={CameraScreen} />
+            <Stack.Screen name="Camera" component={CameraScreen}
+                    options={{
+                        headerRight: ({ tintColor }) => (
+                            <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingRight: 15 }}>
+                                <TouchableOpacity
+                                    onPress={() => console.log('Hey im centered')}
+                                >
+                                    <Feather name="bookmark" size={22} color={tintColor} />
+                                </TouchableOpacity>
+                            </View>
+                        ),
+                        headerLeft: ({ tintColor }) => (
+                            <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingLeft: 15 }}>
+                                <TouchableOpacity
+                                    onPress={() => navigation.toggleDrawer()}
+                                >
+                                    <Feather name="menu" size={22} color={tintColor} />
+                                </TouchableOpacity>
+                            </View>
+                        ),
+                    }} />
             <Stack.Screen name="AntiqueDetail" component={AntiqueDetailScreen} />
         </Stack.Navigator>
     );

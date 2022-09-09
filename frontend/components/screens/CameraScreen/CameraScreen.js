@@ -102,7 +102,8 @@ const CameraScreen = () => {
                     }
                 }
             )
-            navigate('AntiqueDetail');
+            console.log(res.data);
+            navigate('AntiqueDetail',{...res.data});
         } else {
             setPermStatus("granted")
             setLoading(false);

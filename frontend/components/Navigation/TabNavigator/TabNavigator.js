@@ -1,7 +1,9 @@
 import * as React from 'react';
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View,TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import { useNavigation } from '@react-navigation/native';
 
 import {
     FontAwesome5, Octicons,
@@ -20,13 +22,36 @@ import { mainAppColor } from '../../Constants/Colors';
 const Tab = createBottomTabNavigator();
 
 export default function MyTabNavigator() {
+    const navigation = useNavigation();
+
     return (
         <Tab.Navigator initialRouteName="HomeTab"
             screenOptions={{
                 tabBarActiveTintColor: mainAppColor,
-                headerShown: false,
                 tabBarStyle: styles.tabBarStyle,
                 tabBarShowLabel: false,
+                headerRight: ({ tintColor }) => (
+                    <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingRight: 15 }}>
+                        <TouchableOpacity
+                            onPress={() => console.log('Hey im centered')}
+                        >
+                            <Feather name="bookmark" size={22} color={tintColor} />
+                        </TouchableOpacity>
+                    </View>
+                ),
+                headerLeft: ({ tintColor }) => (
+                    <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingLeft: 15 }}>
+                        <TouchableOpacity
+                            onPress={() => navigation.toggleDrawer()}
+                        >
+                            <Feather name="menu" size={22} color={tintColor} />
+                        </TouchableOpacity>
+                    </View>
+                ),
+                headerRightContainerStyle: styles.headerRightContainer,
+                headerTitleAlign: 'center',
+                headerTitleStyle: styles.headerTitle,
+                headerTintColor: "#414141"
 
             }}>
             <Tab.Screen name="Favorite" component={FavoriteScreen}
@@ -55,6 +80,7 @@ export default function MyTabNavigator() {
             <Tab.Screen name="MyStack" component={MyStack}
                 options={
                     {
+                        headerShown:false,
                         tabBarItemStyle: styles.cameraTabBarIcon,
                         title: "Camera",
                         tabBarIcon: ({ color, size }) => (
@@ -107,5 +133,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'relative',
         bottom: 5,
-    }
+    },
+    headerTitle: {
+        color: mainAppColor,
+        fontWeight: '700'
+    },
 })
