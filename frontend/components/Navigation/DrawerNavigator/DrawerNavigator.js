@@ -38,10 +38,7 @@ export default function MyDrawer() {
                     headerTintColor: "#414141"
                 }
             } >
-            <Drawer.Screen name="Home" component={MyTabNavigator}
-                options={{
-                    headerShown: true
-                }} />
+            <Drawer.Screen name="Home" component={MyTabNavigator} />
             <Drawer.Screen name="Profile" component={ProfileScreen} />
             <Drawer.Screen name="Logout" component={Logout} />
         </Drawer.Navigator>
