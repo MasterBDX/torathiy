@@ -55,20 +55,24 @@ class AntiquesDataFetchAPIView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            image = serializer.save()
-            image_path = image.image.path
-            img = load_img(image_path, target_size=(img_height, img_width))
-            x = img_to_array(img)
-            x = x.reshape(1, img_height, img_width, 3)
-            print(x,"gotcha")
+            obj = serializer.save()
+            if obj.image:
+                image_path = obj.image.path
+                print('Path :',image_path)
+                img = load_img(image_path, target_size=(img_height, img_width))
+                x = img_to_array(img)
+                x = x.reshape(1, img_height, img_width, 3)
+                print(x,"gotcha")
 
-            with model_graph.as_default():
-                with tf_session.as_default():
-                    predictions = model.predict(x)
-                    print("predictions",predictions)
+                with model_graph.as_default():
+                    with tf_session.as_default():
+                        predictions = model.predict(x)
+                        print("predictions",predictions)
 
-            predicted_label = labelInfo[str(np.argmax(predictions[0]))]
-            print("predicted_label",predicted_label)
+                predicted_label = labelInfo[str(np.argmax(predictions[0]))]
+                predicted_id = str(np.argmax(predictions[0]))
 
-            return Response({'msg': 'Image has been saved'}, status=HTTP_201_CREATED)
+                return Response({'id': predicted_id,
+                                 'name':predicted_label[1]}, status=HTTP_201_CREATED)
+            return Response("يرجى إضافة صورة", status=HTTP_400_BAD_REQUEST) 
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)

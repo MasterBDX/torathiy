@@ -28,8 +28,8 @@ class AntiqueLocation(models.Model):
 class Antique(models.Model):
     uid = models.CharField(_("Unique ID"), max_length=255)    
     name = models.CharField(_("Name"), max_length=255)
-    overview = models.CharField(_("Name"), max_length=255)
-    description = RichTextField(_("Name"), max_length=255)
+    overview = models.CharField(_("Overview"), max_length=255)
+    description = models.TextField(_("Description"))
     location = models.OneToOneField(AntiqueLocation,
                                     related_name='location',
                                     on_delete=models.SET_NULL,
@@ -42,6 +42,14 @@ class Antique(models.Model):
     type_of_build = models.ForeignKey(AntiqueType, verbose_name=_("Type Of Build"),
                                       on_delete=models.SET_NULL, null=True, blank=True)
 
+    timestamp = models.DateTimeField(_("Timestamp"), auto_now_add=True)
+    updated = models.DateTimeField(_("Updated"), auto_now=True)
+
+
+class AntiqueImage(models.Model):
+    image = models.ImageField(_("Image"))
+    antique = models.ForeignKey(Antique,on_delete=models.CASCADE,
+                                related_name='images',verbose_name=_("Antique"))
     timestamp = models.DateTimeField(_("Timestamp"), auto_now_add=True)
     updated = models.DateTimeField(_("Updated"), auto_now=True)
 
