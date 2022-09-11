@@ -19,7 +19,7 @@ const MyStack = () => {
     const navigation = useNavigation();
 
     return (
-        <Stack.Navigator initialRouteName="AntiqueDetail"
+        <Stack.Navigator initialRouteName="Camera"
             screenOptions={{
                 headerRightContainerStyle: styles.headerRightContainer,
                 headerTitleAlign: 'center',

@@ -3,7 +3,7 @@ import SearchFilter from './SearchFilter/SearchFilter';
 import { Feather } from '@expo/vector-icons';
 import { mainAppColor } from '../../Constants/Colors';
 
-import Title from './Title/Title';
+import Title from '../../Custom/Title/Title';
 import Carousel from './Carousel/Carousel';
 import Features from './Features/Features';
 

@@ -12,8 +12,11 @@ import {
 
     PermissionStatus,
     getCameraPermissionsAsync,
+    getMediaLibraryPermissionsAsync,
     requestCameraPermissionsAsync,
-    launchCameraAsync
+    requestMediaLibraryPermissionsAsync,
+    launchCameraAsync,
+    launchImageLibraryAsync
 
 } from 'expo-image-picker';
 
@@ -30,22 +33,18 @@ import { mainAppColor } from '../../Constants/Colors';
 
 const CameraScreen = () => {
     const { navigate } = useNavigation();
-    const [loading, setLoading] = useState(true);
-    const [permStatus, setPermStatus] = useState(null)
+    const [loading, setLoading] = useState(false);
 
-
-    const permissionsVerify = async () => {
-        const { granted, status } = await getCameraPermissionsAsync();
+    // Verify and Request Camera Permissions
+    const permissionsVerify = async (getPerm, requestPerm) => {
+        const { granted, status } = await getPerm();
 
         if (status == PermissionStatus.UNDETERMINED) {
-            const permissionResponse = await requestCameraPermissionsAsync()
-            permissionResponse.granted ? setPermStatus('granted') : setPermStatus('denied');
+            const permissionResponse = await requestPerm()
             return permissionResponse.granted
         }
 
         if (status == PermissionStatus.DENIED) {
-            setPermStatus('denied');
-
             Alert.alert('Insufficiant Permissions',
                 'You need to grant camera permissions to use this app',
                 [
@@ -56,8 +55,7 @@ const CameraScreen = () => {
                     },
                     {
                         text: "Ask For Permissions", onPress: async () => {
-                            const permissionResponse = await requestCameraPermissionsAsync()
-                            permissionResponse.granted ? setPermStatus("granted") : setPermStatus("denied");
+                            const permissionResponse = await requestPerm()
                             return permissionResponse.granted;
                         }
                     }
@@ -65,17 +63,17 @@ const CameraScreen = () => {
             return false
 
         }
-        setPermStatus('granted');
         return true
     }
 
-    const pickImage = async () => {
-        const havePermission = await permissionsVerify();
+    // Lunch Camera to pick image
+    const pickImage = async (getPerm, requestPerm, lunchFunc) => {
+        setLoading(true);
+        const havePermission = await permissionsVerify(getPerm, requestPerm);
         if (!havePermission) {
-            setPermStatus('denied');
             return;
         }
-        let result = await launchCameraAsync({
+        let result = await lunchFunc({
             aspect: [16, 9],
             quality: 1,
         });
@@ -102,22 +100,25 @@ const CameraScreen = () => {
                     }
                 }
             )
-            console.log(res.data);
-            navigate('AntiqueDetail',{...res.data});
+            navigate('AntiqueDetail', { ...res.data });
+            setLoading(false);
         } else {
-            setPermStatus("granted")
             setLoading(false);
         }
     };
 
+    if (loading) {
+        return (<Spinner size={'large'} color={mainAppColor} />)
+    }
 
     return (<View style={styles.container}>
-        <Text style={styles.text}>
-            إلتقاط المعلم
-        </Text>
-        <TouchableOpacity onPress={pickImage} activeOpacity={.5} style={styles.cameraIconCon}>
-            <AntDesign name="camerao" size={24} color={"#fff"} />
+        <TouchableOpacity onPress={() => pickImage(getCameraPermissionsAsync, requestCameraPermissionsAsync, launchCameraAsync)} activeOpacity={.5} style={styles.cameraIconCon}>
+            <AntDesign name="camerao" size={30} color={"#fff"} />
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => pickImage(getMediaLibraryPermissionsAsync, requestMediaLibraryPermissionsAsync, launchImageLibraryAsync)} activeOpacity={.5} style={styles.cameraIconCon}>
+            <AntDesign name="upload" size={30} color={"#fff"} />
+        </TouchableOpacity>
+
     </View>)
 }
 
@@ -129,10 +130,11 @@ const styles = StyleSheet.create({
         flex: 1
     },
     cameraIconCon: {
+        marginTop: 20,
         backgroundColor: mainAppColor,
         borderRadius: 4,
-        width: 100,
-        height: 35,
+        width: 150,
+        height: 45,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
