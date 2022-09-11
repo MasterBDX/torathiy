@@ -6,12 +6,12 @@ from ..models import (Antique, AntiqueLocation,
                       AntiqueImage)
 
 
-class AntiqueLocation(serializers.ModelSerializer):
+class AntiqueLocationSerializer(serializers.ModelSerializer):
     city = serializers.SerializerMethodField()
 
     class Meta:
         model = AntiqueLocation
-        fields = ['country', 'city','place', 'latitude', 'longitude']
+        fields = ['id','country', 'city','place', 'latitude', 'longitude']
 
     def get_city(self, obj):
         return obj.city.name
@@ -50,7 +50,7 @@ class AntiqueDetailSerializer(serializers.ModelSerializer):
                   "images", "references", "build_type"]
 
     def get_location(self, obj):
-        return AntiqueLocation(obj.location).data
+        return AntiqueLocationSerializer(obj.location).data
 
     def get_main_image(self, obj):
         request = self.context.get("request")

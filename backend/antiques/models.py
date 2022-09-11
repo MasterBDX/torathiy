@@ -35,8 +35,10 @@ class Antique(models.Model):
     religion = models.CharField(_("Religion"), max_length=255)
     origin = models.CharField(_("Origin"), max_length=255)
     main_image = models.ImageField(_("Main Image"), null=True, blank=True)
-    start_date = models.DateTimeField(_("Start Date"), null=True, blank=True)
-    end_date = models.DateTimeField(_("End Date"), null=True, blank=True)
+    start_date = models.CharField(
+        _("Start Date"), null=True, blank=True, max_length=255)
+    end_date = models.CharField(
+        _("End Date"), null=True, blank=True, max_length=255)
     type_of_build = models.ForeignKey(AntiqueType, verbose_name=_("Type Of Build"),
                                       on_delete=models.SET_NULL, null=True, blank=True)
 
