@@ -4,13 +4,18 @@ import MapView, { Marker } from 'react-native-maps';
 
 import {
     StyleSheet, TouchableWithoutFeedback,
-    View, Dimensions, Text, SafeAreaView
+    View, Dimensions, SafeAreaView, Alert
 } from 'react-native';
 
+import myAxios from '../../myAxios/axios';
 
 import { MaterialIcons } from '@expo/vector-icons';
 
+import Spinner from '../../Custom/Spinner/Spinner';
+
 import { mainAppColor } from '../../Constants/Colors';
+
+import Ruin from '../../../assets/ruin.png'
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -21,12 +26,11 @@ import {
     getCurrentPositionAsync,
 } from 'expo-location';
 
-import Locations from '../../Models/Location';
-
-
 const MapScreen = () => {
     const [permissionStatus, requestPermissions] = useForegroundPermissions();
     const [userLocation, setUserLocation] = useState(null);
+    const [locations, setLocations] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const verifyPermissions = async () => {
         if (permissionStatus.status == PermissionStatus.UNDETERMINED) {
@@ -35,7 +39,21 @@ const MapScreen = () => {
         }
 
         if (permissionStatus.status == PermissionStatus.DENIED) {
-            Alert.alert('Insufficiant Permissions', 'You need to grant camera permissions to use this app');
+            Alert.alert('Insufficiant Permissions',
+                'You need to grant location permissions to use this app',
+                [
+                    {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                    {
+                        text: "Ask For Permissions", onPress: async () => {
+                            const permissionResponse = await requestPermissions()
+                            return permissionResponse.granted;
+                        }
+                    }
+                ]);
             return false;
         }
         return true;
@@ -70,10 +88,23 @@ const MapScreen = () => {
                 latitude: myLocationCord.latitude,
                 longitude: myLocationCord.longitude,
             }}
+            
             title={"My Location"}
             description={'This is your current location'}
             pinColor={'skyblue'}
         />
+    }
+    useEffect(() => {
+        const fetchLocation = async () => {
+            const res = await myAxios.get('antiques/locations/');
+            setLocations(res.data);
+            setLoading(false)
+        }
+        fetchLocation();
+    }, [])
+
+    if (loading) {
+        return (<Spinner size={'large'} color={mainAppColor} />)
     }
 
     return (<SafeAreaView style={styles.container}>
@@ -84,6 +115,7 @@ const MapScreen = () => {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
             }}
+            
             region={{
                 latitude: myLocationCord.latitude,
                 longitude: myLocationCord.longitude,
@@ -91,12 +123,12 @@ const MapScreen = () => {
                 longitudeDelta: 0.0421
             }}>
             {Mark}
-            {Locations.map((item, index) => {
+            {locations.map((item, index) => {
                 return (<Marker
                     key={item.id}
                     coordinate={{
-                        latitude: item.latitude,
-                        longitude: item.longitude,
+                        latitude: parseFloat(item.latitude),
+                        longitude: parseFloat(item.longitude),
                     }}
                     title={item.name}
                     description={item.description}

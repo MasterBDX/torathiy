@@ -4,7 +4,7 @@ import {
     StyleSheet, Dimensions, ScrollView
 } from 'react-native';
 
-import { SimpleLineIcons, MaterialIcons, Feather } from '@expo/vector-icons';
+import { SimpleLineIcons, MaterialIcons, Feather,MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Title from '../../Custom/Title/Title';
 import { mainAppColor } from '../../Constants/Colors';
@@ -15,15 +15,12 @@ import Carousel from './Carousel/Carousel';
 
 import defaultImage from '../../../assets/550x300.png'
 
+
+
 const WIDTH = Dimensions.get('window').width;
 const HEIGTH = Dimensions.get('window').height;
 
-const images = [
-    "https://a.storyblok.com/f/95452/2000x1125/96f180a0c6/libya-leptis-magna.png/m/1024x768",
-    "https://images.unsplash.com/photo-1603566541830-972ff1b4b2cd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YW5jaWVudCUyMHJ1aW5zfGVufDB8fDB8fA%3D%3D&w=1000&q=80",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Tavares.Forum.Romanum.redux.jpg/1200px-Tavares.Forum.Romanum.redux.jpg",
-    "https://cf.bstatic.com/data/xphoto/1182x887/326/32605796.jpg?size=S"
-]
+
 
 const AntiqueDetailScreen = ({ route, navigation }) => {
     const { id, name } = route.params;
@@ -36,9 +33,9 @@ const AntiqueDetailScreen = ({ route, navigation }) => {
         const fetchData = async () => {
             const res = await myAxios.get(`antiques/${id}/detail/`);
             setAntiqueData(res.data);
-            // if (res.data.images.length > 0) {
-            //     setActiveImage(res.data.images[0].image)
-            // }
+            if (res.data.images.length > 0) {
+                setActiveImage(res.data.images[0].image)
+            }
             navigation.setOptions({
                 title: res.data.name,
             })
@@ -54,7 +51,7 @@ const AntiqueDetailScreen = ({ route, navigation }) => {
     return (
         <ScrollView>
             <View>
-                <Image style={styles.mainImage} source={activeImage ? { uri: activeImage } : defaultImage}
+                <Image style={styles.mainImage} source={{ uri: activeImage }}
                     resizeMode={'cover'} />
                 <TouchableWithoutFeedback>
                     <View style={styles.fullscreen}>
@@ -101,6 +98,22 @@ const AntiqueDetailScreen = ({ route, navigation }) => {
             <Text style={styles.content}>
                 {antiqueData.description}
             </Text>
+            <Title title={'التاريخ'} icon={() => (
+                <MaterialIcons name="date-range"
+                    size={26}
+                    color={mainAppColor} />
+            )} />
+            <Text style={styles.content}>
+                {antiqueData.start_date}
+                -
+                {antiqueData.enddate_date}
+
+            </Text>
+            <Title title={'مراجع'} icon={() => (
+                <MaterialCommunityIcons name="text-box-search-outline"
+                    size={26}
+                    color={mainAppColor} />
+            )} />
 
         </ScrollView>
     )
