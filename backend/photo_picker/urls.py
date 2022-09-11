@@ -7,13 +7,14 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/images/', include('images.api.urls', namespace='images'))
+    path('api/images/', include('images.api.urls', namespace='images')),
+    path('api/antiques/', include('antiques.api.urls', namespace='antiques'))
 ]
-
 
 
 if settings.DEBUG:
 
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)    
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)

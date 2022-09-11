@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from .models import AntiqueType, AntiqueLocation, Antique
+from .models import (AntiqueType, AntiqueLocation,
+                     Antique, AntiqueImage, Reference,
+                     )
 
 
 @admin.register(AntiqueType)
@@ -16,3 +18,15 @@ class AntiqueLocationAdmin(admin.ModelAdmin):
 @admin.register(Antique)
 class AntiqueAdmin(admin.ModelAdmin):
     list_display = ['name', 'id', "religion", "timestamp"]
+
+
+@admin.register(AntiqueImage)
+class AntiqueImageAdmin(admin.ModelAdmin):
+    list_display = ['antique', 'id', 'image']
+
+
+@admin.register(Reference)
+class ReferenceAdmin(admin.ModelAdmin):
+    list_display = ['name', 'date',
+                    'url', "description",
+                    "antique"]
